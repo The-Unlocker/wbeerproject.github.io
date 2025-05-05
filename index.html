@@ -1,0 +1,95 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wBEER - Bee Real</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Hero Section -->
+  <header class="bg-yellow-500 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+      <img src="https://i.postimg.cc/HswSsm6J/752-FBE82-EE75-45-E1-94-FC-FC9-C49-BB7090.png" alt="wBEER Logo" class="mx-auto w-32 h-32 mb-4">
+      <h1 class="text-4xl md:text-6xl font-bold">wBEER - Bee Real</h1>
+      <p class="text-xl mt-4">“For everyone who got stung — Bee Real knows how to fly.”</p>
+      <p class="mt-2">A fair, transparent community token on BNB Smart Chain to restore hope.</p>
+      <a href="https://pancakeswap.finance/swap?outputCurrency=0xb6eb93F78933BC3820a2c508c050703CD7b234f1" target="_blank" class="mt-6 inline-block bg-black text-yellow-500 py-3 px-6 rounded-lg font-semibold hover:bg-gray-800">Swap on PancakeSwap</a>
+    </div>
+  </header>
+
+  <!-- Info Cards Section -->
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Mission Card -->
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 class="text-2xl font-bold mb-4">Our Mission</h2>
+          <p>wBEER stands for truth, transparency, and recovery. Built to restore hope for those affected by the previous “BEER” scam, wBEER is a community-driven token with no hidden agendas.</p>
+        </div>
+        <!-- Token Contract Card -->
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 class="text-2xl font-bold mb-4">Token Contract</h2>
+          <p>Deployed on BNB Smart Chain:<br><span class="font-mono text-sm break-all">0xb6eb93F78933BC3820a2c508c050703CD7b234f1</span></p ${{ seminararbeit . >
+          <p class="mt-2">Verified on BscScan, built with OpenZeppelin ERC20 standard, no honeypot code, fully swappable.</p>
+          <a href="https://bscscan.com/token/0xb6eb93F78933BC3820a2c508c050703CD7b234f1" target="_blank" class="mt-4 inline-block text-yellow-500 font-semibold hover:underline">View on BscScan</a>
+        </div>
+        <!-- Trading Card -->
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 class="text-2xl font-bold mb-4">Trade wBEER</h2>
+          <p>Total Supply: 1,000,000,000 wBEER<br>Circulating Supply: 1,000,000,000<br>Decimals: 18</p>
+          <p class="mt-2">Trade wBEER securely on PancakeSwap.</p>
+          <a href="https://pancakeswap.finance/swap?outputCurrency=0xb6eb93F78933BC3820a2c508c050703CD7b234f1" target="_blank" class="mt-4 inline-block text-yellow-500 font-semibold hover:underline">Trade Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 wBEER - Bee Real. All rights reserved.</p>
+      <p class="mt-2">Follow us on <a href="#" class="text-yellow-500 hover:underline">Twitter</a> and <a href="#" class="text-yellow-500 hover:underline">Telegram</a> (Coming soon)</p>
+    </div>
+  </footer>
+</body>
+</html>
